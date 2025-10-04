@@ -2,11 +2,14 @@ header{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    text-align: center;
     align-items: center;
     width: 95%;
     background-color: #282c34;
-    max-height: 100px;
+    max-height: 80px;
     padding: 0%;
+
+    border-bottom: 1px solid white;
 }
 
 #titulo{
