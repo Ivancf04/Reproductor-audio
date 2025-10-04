@@ -5,12 +5,11 @@ import "./App.css"
 
 function App() {
   const handleClick = () => {
-    alert("Icono clickeado 🎵");
+    alert("Subiendo cancion");
   };
 
   return (
     <div id="contenedor-principal">
-      
       <Header
         title="DASC UABCS - MP3 Player"
         iconUrl="../../public/img/mas.png"
