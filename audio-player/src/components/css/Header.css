@@ -1,0 +1,17 @@
+header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+    background-color: #282c34;
+    max-height: 100px;
+    padding: 0%;
+}
+
+#titulo{
+    font-size: 2rem;
+    color: white;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-weight: 300;
+}
