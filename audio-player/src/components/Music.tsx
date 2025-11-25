@@ -17,12 +17,10 @@ const Music = () => {
         "tutoriel-simple-237930.mp3"];
 
     const play = (song:string) => {
-    // Funcion para buscar la cancion por id y extraer url
         alert("Reproduciendo: " + song);
     };
 
     const deleteMusic = (song:string) => {
-        // Funcion para buscar la cancion por id y extraer url
         alert("Eliminando: " + song);
     };
   return (
