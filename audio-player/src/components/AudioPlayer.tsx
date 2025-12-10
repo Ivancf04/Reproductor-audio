@@ -1,33 +1,54 @@
 import styles from "./css/AudioPlayer.module.css";
 import IconButton from "./IconButton";
-import { useAudioPlayer } from "./AudioPayerLogic";
-import { usePlaylist } from "./ts/usePlaylist";
+import type React from "react";
 
-const AudioPlayer = () => {
-  const { store } = usePlaylist();
-  const { selectedSong } = store;
+type AudioPlayerProps = {
+  audioRef: React.RefObject<HTMLAudioElement | null>;
+  title: string;
+  currentTimeText: string;
+  currentTime: number;
+  duration: number;
+  volume: number;
+  isMuted: boolean;
+  playPauseIcon: string;
+  volumeIcon: string;
+  handlePlayPause: () => void;
+  handleNext: () => void;
+  handlePrevious: () => void;
+  handleMute: () => void;
+  handleTimeUpdate: () => void;
+  handleProgressChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleVolumeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSeekEnd: () => void;
+  handleOnPlay: () => void;
+  handleOnPause: () => void;
+  onEnded: () => void;
+  selectedSongPath: string | null;
+};
 
-  const {
-    audioRef,
-    title,
-    currentTimeText,
-    currentTime,
-    volume,
-    isMuted,
-    playPauseIcon,
-    volumeIcon,
-    duration,
-    handlePlayPause,
-    handleNext,
-    handlePrevious,
-    handleMute,
-    handleTimeUpdate,
-    handleProgressChange,
-    handleVolumeChange,
-    handleSeekEnd,
-    onEnded,
-  } = useAudioPlayer(selectedSong ? selectedSong.path : "");
-
+const AudioPlayer = ({
+  audioRef,
+  title,
+  currentTimeText,
+  currentTime,
+  duration,
+  volume,
+  isMuted,
+  playPauseIcon,
+  volumeIcon,
+  handlePlayPause,
+  handleNext,
+  handlePrevious,
+  handleMute,
+  handleTimeUpdate,
+  handleProgressChange,
+  handleVolumeChange,
+  handleSeekEnd,
+  handleOnPlay,
+  handleOnPause,
+  onEnded,
+  selectedSongPath,
+}: AudioPlayerProps) => {
   const progress = duration ? (currentTime / duration) * 100 : 0;
 
   return (
@@ -61,11 +82,11 @@ const AudioPlayer = () => {
             style={{
               cursor: "pointer",
               background: `linear-gradient(to right,
-              #ff853d 0%,
-              #ff853d ${progress}%,
-              #1e1e1e ${progress}%,
-              #1e1e1e 100%
-            )`,
+                #ff853d 0%,
+                #ff853d ${progress}%,
+                #1e1e1e ${progress}%,
+                #1e1e1e 100%
+              )`,
             }}
           />
           <div className={styles.timeDisplay}>{currentTimeText}</div>
@@ -87,12 +108,16 @@ const AudioPlayer = () => {
       <audio
         ref={audioRef}
         src={
-          selectedSong ? `../../public/songs/${selectedSong.path}` : undefined
+          selectedSongPath
+            ? `../../public/songs/${selectedSongPath}`
+            : undefined
         }
         preload="metadata"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleTimeUpdate}
         onEnded={onEnded}
+        onPlay={handleOnPlay}
+        onPause={handleOnPause}
         className={styles.audioElement}
       />
     </div>

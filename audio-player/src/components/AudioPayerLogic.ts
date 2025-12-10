@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import type { ChangeEvent } from "react";
-import { usePlaylist } from "./ts/usePlaylist";
+import { usePlaylist } from "./ts/usePlaylist"; 
 
 export const useAudioPlayer = (url: string) => {
-  const { store, setSelectedTrack } = usePlaylist();
-  const { songs, selectedSong } = store;
-
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -16,15 +12,17 @@ export const useAudioPlayer = (url: string) => {
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
 
+  const { store, setSelectedTrack } = usePlaylist();
+  const { songs, selectedSongIndex } = store;
+
+  const title = url ? url.replace(".mp3", "") : "Selecciona una canción";
+
   const formatTime = (time: number) => {
-    if (!Number.isFinite(time) || time < 0) return "0:00";
+    if (!isFinite(time) || time < 0) return "0:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${String(seconds).padStart(2, "0")}`;
   };
-
-  const title =
-    selectedSong?.title ?? (url ? url.replace(".mp3", "") : "Selecciona una canción");
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -38,6 +36,18 @@ export const useAudioPlayer = (url: string) => {
     setDuration(0);
     setCurrentTimeText("0:00 / 0:00");
     setIsPlaying(false);
+  }, [url]);
+
+  useEffect(() => {
+    if (!url) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.currentTime = 0;
+    audio
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch(() => setIsPlaying(false));
   }, [url]);
 
   const handlePlayPause = () => {
@@ -56,22 +66,14 @@ export const useAudioPlayer = (url: string) => {
   };
 
   const handleNext = () => {
-    if (!selectedSong || songs.length === 0) return;
-    const index = songs.findIndex((s) => s.path === selectedSong.path);
-    const nextIndex = index === -1 ? 0 : (index + 1) % songs.length;
-    setSelectedTrack(songs[nextIndex]);
-    setIsPlaying(false);
-    setCurrentTime(0);
+    if (!songs.length) return;
+    setSelectedTrack(((selectedSongIndex ?? 0) + 1) % songs.length);
   };
 
+
   const handlePrevious = () => {
-    if (!selectedSong || songs.length === 0) return;
-    const index = songs.findIndex((s) => s.path === selectedSong.path);
-    const prevIndex =
-      index === -1 ? 0 : (index - 1 + songs.length) % songs.length;
-    setSelectedTrack(songs[prevIndex]);
-    setIsPlaying(false);
-    setCurrentTime(0);
+    if (!songs.length) return;
+    setSelectedTrack(((selectedSongIndex ?? 0) - 1 + songs.length) % songs.length);
   };
 
   const handleMute = () => {
@@ -92,7 +94,7 @@ export const useAudioPlayer = (url: string) => {
     }
   };
 
-  const handleProgressChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsSeeking(true);
     const value = Number(e.target.value);
     setCurrentTime(value);
@@ -108,11 +110,19 @@ export const useAudioPlayer = (url: string) => {
     setIsSeeking(false);
   };
 
-  const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(e.target.value);
     setVolume(newVolume);
     if (newVolume === 0) setIsMuted(true);
     else if (isMuted) setIsMuted(false);
+  };
+
+  const handleOnPlay = () => {
+    setIsPlaying(true);
+  };
+
+  const handleOnPause = () => {
+    setIsPlaying(false);
   };
 
   const playPauseIcon = isPlaying
@@ -126,7 +136,6 @@ export const useAudioPlayer = (url: string) => {
 
   const onEnded = () => {
     handleNext();
-    setIsPlaying(false);
   };
 
   return {
@@ -147,6 +156,9 @@ export const useAudioPlayer = (url: string) => {
     handleProgressChange,
     handleVolumeChange,
     handleSeekEnd,
+    handleOnPlay,
+    handleOnPause,
     onEnded,
+    isPlaying,
   };
 };

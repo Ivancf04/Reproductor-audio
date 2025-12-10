@@ -20,16 +20,16 @@ export const usePlaylist = () => {
     dispatch({ type: PlaylistActionTypes.ADD_TRACK, payload: song });
   };
 
-  const removeTrack = (song: Song) => {
-    dispatch({ type: PlaylistActionTypes.REMOVE_TRACK, payload: song });
+  const removeTrack = (index: number) => {
+    dispatch({ type: PlaylistActionTypes.REMOVE_TRACK, payload: index });
   };
 
   const clearPlaylist = () => {
     dispatch({ type: PlaylistActionTypes.CLEAR_PLAYLIST });
   };
 
-  const setSelectedTrack = (song: Song | null) => {
-    dispatch({ type: PlaylistActionTypes.SET_SELECTED_TRACK, payload: song });
+  const setSelectedTrack = (index: number | null) => {
+    dispatch({ type: PlaylistActionTypes.SET_SELECTED_TRACK, payload: index });
   };
 
   return {

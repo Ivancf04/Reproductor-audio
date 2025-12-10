@@ -23,7 +23,7 @@ export type AddTrackAction = {
 
 export type RemoveTrackAction = {
   type: typeof PlaylistActionTypes.REMOVE_TRACK;
-  payload: Song;
+  payload: number;
 };
 
 export type ClearPlaylistAction = {
@@ -32,7 +32,7 @@ export type ClearPlaylistAction = {
 
 export type SetSelectedTrackAction = {
   type: typeof PlaylistActionTypes.SET_SELECTED_TRACK;
-  payload: Song | null;
+  payload: number | null;
 };
 
 export type PlaylistAction =
@@ -49,19 +49,40 @@ export const playlistReducer = (
   switch (action.type) {
     case PlaylistActionTypes.SET_PLAYLIST:
       return { ...state, songs: action.payload };
+
     case PlaylistActionTypes.ADD_TRACK:
       return { ...state, songs: [...state.songs, action.payload] };
-    case PlaylistActionTypes.REMOVE_TRACK:
+
+    case PlaylistActionTypes.REMOVE_TRACK: {
+      const indexToRemove = action.payload;
+      const newSongs = state.songs.filter((_, i) => i !== indexToRemove);
+
+      let newSelectedIndex = state.selectedSongIndex;
+
+      if (newSongs.length === 0) {
+        newSelectedIndex = null;
+      } else if (newSelectedIndex !== null) {
+        if (indexToRemove === newSelectedIndex) {
+          newSelectedIndex =
+            indexToRemove >= newSongs.length ? newSongs.length - 1 : indexToRemove;
+        } else if (indexToRemove < newSelectedIndex) {
+          newSelectedIndex = newSelectedIndex - 1;
+        }
+      }
+
       return {
         ...state,
-        songs: state.songs.filter(
-          (song) => song.path !== action.payload.path
-        ),
+        songs: newSongs,
+        selectedSongIndex: newSelectedIndex,
       };
+    }
+
     case PlaylistActionTypes.CLEAR_PLAYLIST:
-      return { ...state, songs: [], selectedSong: null };
+      return { ...state, songs: [], selectedSongIndex: null };
+
     case PlaylistActionTypes.SET_SELECTED_TRACK:
-      return { ...state, selectedSong: action.payload };
+      return { ...state, selectedSongIndex: action.payload };
+
     default:
       return state;
   }

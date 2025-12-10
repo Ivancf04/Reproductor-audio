@@ -5,7 +5,7 @@ export type Song = {
 
 export type PlaylistStore = {
   songs: Song[];
-  selectedSong: Song | null;
+  selectedSongIndex: number | null;
 };
 
 export const initialPlaylistStore: PlaylistStore = {
@@ -51,6 +51,6 @@ export const initialPlaylistStore: PlaylistStore = {
       title: "Tutoriel Simple",
     },
   ],
-  selectedSong: null,
+  selectedSongIndex: -1,
 };
 
