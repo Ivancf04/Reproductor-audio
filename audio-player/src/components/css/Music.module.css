@@ -1,0 +1,49 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 98%;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  overflow-y: scroll;
+  max-height: 600px;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.music {
+  width: 97%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1%;
+  border-bottom: 1px solid white;
+}
+
+.musicInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  text-align: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.tituloCancion {
+  font-size: 1.2rem;
+  color: white;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-weight: 300;
+  margin: 0;
+}
+
+.music:hover {
+  background-color: #3e3e3e;
+}
+
+.active {
+  background-color: #444;
+  border-left: 2px solid #ff853d;
+}
+

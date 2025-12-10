@@ -1,12 +1,12 @@
-import "./css/AudioPlayer.css";
+import styles from "./css/AudioPlayer.module.css";
 import IconButton from "./IconButton";
 import { useAudioPlayer } from "./AudioPayerLogic";
+import { usePlaylist } from "./ts/usePlaylist";
 
-type AudioPlayerProps = {
-  url: string;
-};
+const AudioPlayer = () => {
+  const { store } = usePlaylist();
+  const { selectedSong } = store;
 
-const AudioPlayer = ({ url }: AudioPlayerProps) => {
   const {
     audioRef,
     title,
@@ -26,38 +26,49 @@ const AudioPlayer = ({ url }: AudioPlayerProps) => {
     handleVolumeChange,
     handleSeekEnd,
     onEnded,
-  } = useAudioPlayer(url);
+  } = useAudioPlayer(selectedSong ? selectedSong.path : "");
+
+  const progress = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="audio-player">
-      <div className="audio-title">{title}</div>
+    <div className={styles.audioPlayer}>
+      <div className={styles.audioTitle}>{title}</div>
 
-      <div className="audio-container">
-        <div className="audio-controls">
+      <div className={styles.audioContainer}>
+        <div className={styles.audioControls}>
           <IconButton
             iconUrl="../../public/img/ant.png"
             onClick={handlePrevious}
           />
-          <IconButton iconUrl={playPauseIcon} onClick={handlePlayPause} />
           <IconButton
-            iconUrl="../../public/img/sig.png"
-            onClick={handleNext}
+            iconUrl={playPauseIcon}
+            onClick={handlePlayPause}
+            className={styles.playPauseBtn}
           />
+          <IconButton iconUrl="../../public/img/sig.png" onClick={handleNext} />
         </div>
 
-        <div className="progress-container">
+        <div className={styles.progressContainer}>
           <input
             type="range"
             min={0}
             max={duration || 0}
             value={currentTime}
-            className="progress-bar"
+            className={styles.progressBar}
             step={0.01}
             onChange={handleProgressChange}
             onPointerUp={handleSeekEnd}
-            style={{ cursor: "pointer" }}
+            style={{
+              cursor: "pointer",
+              background: `linear-gradient(to right,
+              #ff853d 0%,
+              #ff853d ${progress}%,
+              #1e1e1e ${progress}%,
+              #1e1e1e 100%
+            )`,
+            }}
           />
-          <div className="time-display">{currentTimeText}</div>
+          <div className={styles.timeDisplay}>{currentTimeText}</div>
 
           <IconButton iconUrl={volumeIcon} onClick={handleMute} />
 
@@ -67,7 +78,7 @@ const AudioPlayer = ({ url }: AudioPlayerProps) => {
             max={1}
             step={0.01}
             value={isMuted ? 0 : volume}
-            className="progress-bar-volume"
+            className={styles.progressBarVolume}
             onChange={handleVolumeChange}
           />
         </div>
@@ -75,11 +86,14 @@ const AudioPlayer = ({ url }: AudioPlayerProps) => {
 
       <audio
         ref={audioRef}
-        src={`../../public/songs/${url}`}
+        src={
+          selectedSong ? `../../public/songs/${selectedSong.path}` : undefined
+        }
         preload="metadata"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleTimeUpdate}
         onEnded={onEnded}
+        className={styles.audioElement}
       />
     </div>
   );

@@ -1,7 +1,8 @@
 import Header from "./components/Header";
-import Music from "./components/music";
+import Music from "./components/Music";
 import AudioPlayer from "./components/AudioPlayer";
-import "./App.css"
+import styles from "./App.module.css";
+import { PlaylistProvider } from "./components/ts/PlaylistProvider";
 
 function App() {
   const handleClick = () => {
@@ -9,20 +10,20 @@ function App() {
   };
 
   return (
-    <div id="contenedor-principal">
-      <Header
-        title="DASC UABCS - MP3 Player"
-        iconUrl="../../public/img/mas.png"
-        onIconClick={handleClick}
-      />
-      <br />
-      <Music/>
-      <footer>
-        <AudioPlayer
-        url="connected-science-electronica-283955.mp3"
+    <PlaylistProvider>
+      <div className={styles.contenedorPrincipal}>
+        <Header
+          title="DASC UABCS - MP3 Player"
+          iconUrl="../../public/img/mas.png"
+          onIconClick={handleClick}
         />
-      </footer>
-    </div>
+        <br />
+        <Music />
+        <footer className={styles.footer}>
+          <AudioPlayer />
+        </footer>
+      </div>
+    </PlaylistProvider>
   );
 }
 
